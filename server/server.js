@@ -13,8 +13,10 @@ const __dirname = (() => { let x = path.dirname(decodeURI(new URL(import.meta.ur
 const app = express()
 const port = process.env.PORT || 9000
 
-
-const sessionStore = new MongoStore({ mongoUrl: process.env.DB_CONNECTION_STRING, collection: 'sessions' })
+const sessionStore = new MongoStore({
+  mongoUrl: process.env.DB_CONNECTION_STRING,
+  collection: 'sessions'
+})
 
 
 app.use(express.json())

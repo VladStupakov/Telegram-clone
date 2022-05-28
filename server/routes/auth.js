@@ -2,7 +2,7 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import User from '../models/userModel.js'
 import passport from '../middlewares/passport.js'
-
+import {confirmRegistrationLetter} from '../services/mailingService.js'
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -14,6 +14,7 @@ router.post('/register', async (req, res) => {
             return res.send(err)
         }
         else {
+            confirmRegistrationLetter(res, newUser.email)
             return res.status(200).send('user registered')
         }
     })

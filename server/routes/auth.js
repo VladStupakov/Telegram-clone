@@ -2,7 +2,7 @@ import express from 'express'
 import bcrypt from 'bcrypt'
 import User from '../models/userModel.js'
 import passport from '../middlewares/passport.js'
-import {confirmRegistrationLetter} from '../services/mailingService.js'
+import { confirmRegistrationLetter } from '../services/mailingService.js'
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -20,9 +20,9 @@ router.post('/register', async (req, res) => {
     })
 });
 
-router.post('/login', passport.authenticate('local'), (req, res) =>{
-    res.status(200).send({user: req.user._id})
-} )
+router.post('/login', passport.authenticate('local'), (req, res) => {
+    res.status(200).send({ user: req.user._id })
+})
 
 router.post('/logout', (req, res) => {
     User.findById(req.user._id, (err, user) => {
@@ -37,10 +37,31 @@ router.post('/logout', (req, res) => {
                 }
                 else {
                     req.session = null
+                    res.redirect('/login')
                 }
             })
         }
     });
 })
 
+router.patch('/confirm', (req, res) => {
+    const id =  req.user_id
+    User.findById(id, (err, user) => {
+        if (err) {
+            return res.status(505).send({ err })
+        }
+        else {
+            user.varified = true;
+            user.save((err, document) => {
+                if (err) {
+                    return res.status(505).send({ err })
+                }
+                else {
+                    return res.status(200).send({ message: 'email confirmed' })
+                }
+            })
+        }
+    })
+
+});
 export default router

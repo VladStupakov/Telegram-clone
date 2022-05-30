@@ -4,7 +4,7 @@ import './config/dbConfig.js'
 import session from 'express-session'
 import passport from 'passport'
 import auth from './routes/auth.js'
-//import chat from './routes/chat.js'
+import chat from './routes/chat.js'
 import MongoStore from 'connect-mongo';
 import path from 'path';
 
@@ -36,7 +36,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(__dirname + '/uploads'));
 app.use('/', auth)
-//app.use('/main', chat);
+app.use('/main', chat);
 
 app.listen(port, () => console.log(`Listening on port ${port}...`))
 

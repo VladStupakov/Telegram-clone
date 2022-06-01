@@ -7,17 +7,17 @@ mongoose.connect(conection_url)
 mongoose.connection.once('open', () => {
     const changeStreamChats = mongoose.connection.collection('chats').watch()
     const changeStreamChannels = mongoose.connection.collection('channels').watch()
-    changeStreamChats.on('change', (change) =>{
+    changeStreamChats.on('change', (newData) =>{
         if(change.operationType === 'update'){
             pusher.trigger("chats", "newMessage", {
-                data: change
+                data: newData
               });
         }
     })
-    changeStreamChannels.on('change', (change) =>{
+    changeStreamChannels.on('change', (newData) =>{
         if(change.operationType === 'update'){
             pusher.trigger("channels", "newMessage", {
-                data: change
+                data: newData
               })
         }
     })

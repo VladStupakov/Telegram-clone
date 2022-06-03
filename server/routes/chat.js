@@ -2,12 +2,32 @@ import express from 'express'
 import Chat from '../models/chatModel.js'
 import Channel from '../models/channelModel.js';
 import User from '../models/userModel.js';
+import multer from 'multer'
+import * as fs from 'fs';
 
 const router = express.Router();
 
+let storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const dir = 'uploads/' + `${req.body.type}/` + `${req.body.id}/`
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        cb(null, dir)
+    },
+    filename: (req, file, cb) => {
+        const message = JSON.parse(req.body.message)
+        message.media.push(file.originalname)
+        req.body.message = JSON.stringify(message)
+        cb(null, file.originalname)
+    }
+})
+
+let upload = multer({ storage: storage }).array('files')
+
 router.post('/create-chat', (req, res) => {
-    const chat = req.body
-    Chat.create(chat, (err, newChat) => {
+    const data = req.body
+    Chat.create(data, (err, newChat) => {
         if (err) {
             return res.status(500).send({ err })
         }
@@ -89,7 +109,7 @@ router.delete('/delete-chat', (req, res) => {
 
 router.post('/create-channel', (req, res) => {
     const data = req.body
-    Channel.create(channel, (err, document) => {
+    Channel.create(data, (err, document) => {
         if (err) {
             return res.send(err)
         }
@@ -99,7 +119,7 @@ router.post('/create-channel', (req, res) => {
     })
 })
 
-router.patch('follow', (req, res) => {
+router.patch('/follow', (req, res) => {
     const data = req.body
     let promises = []
     if (data.follow) {
@@ -130,16 +150,106 @@ router.delete('/delete-channel', (req, res) => {
             return res.send({ message: 'access denied' })
         }
         else {
-            User.updateMany({ _id: { $in: document.membders } }, { $pull: { chats: document._id } }, (error, result) =>{
-                if(error){
+            User.updateMany({ _id: { $in: document.membders } }, { $pull: { chats: document._id } }, (error, result) => {
+                if (error) {
                     return res.send(err)
                 }
-                else{
-                    return res.send({message: 'channel deleted'})
+                else {
+                    return res.send({ message: 'channel deleted' })
                 }
             })
         }
     })
 })
+
+//send message in chat/channel
+router.post('/', upload, (req, res) => {
+    const { type, id, message } = req.body;
+    message.readBy = [req.user._id]
+    if (type === 'channel') {
+        Channel.findByIdAndUpdate(id, { $addToSet: { messages: message, } }, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            else {
+                return res.send({ message: 'message sent' })
+            }
+        })
+    }
+    else {
+        message.author = req.user._id
+        Chat.findByIdAndUpdate(id, { $addToSet: { messages: message } }, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            else {
+                return res.send({ message: 'message sent' })
+            }
+        })
+    }
+})
+
+//delete message from chat/channel
+router.delete('/', (req, res) => {
+    const { type, id, messageId } = req.body
+    if (type == 'channel') {
+        Channel.findByIdAndUpdate(id, { $pull: { messages: { _id: messageId } } }, (err, document) => {
+            if (err) {
+                return res.send(err)
+            }
+            if (!document) {
+                return res.send({ message: 'access denied' })
+            }
+            else {
+                return res.send({ message: 'message deleted' })
+            }
+        })
+    }
+    else {
+        Chat.findByIdAndUpdate(id, { $pull: { messages: { _id: messageId } } }, (err, document) => {
+            if (err) {
+                return res.send(err)
+            }
+            if (!document) {
+                return res.send({ message: 'access denied' })
+            }
+            else {
+                return res.send({ message: 'message deleted' })
+            }
+        })
+    }
+})
+
+//update message in chat/channel
+router.put('/', upload, (req, res) => {
+    const { type, id, message } = req.body
+    if (type == 'channel') {
+        Channel.findOneAndUpdate({ _id: id, "messages._id": message.id }, { $set: { "messages.$.text": message.text, "messages.$.timestamp": message.timestamp } }, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            if (!document) {
+                return res.send({ message: 'access denied' })
+            }
+            else {
+                return res.send({ message: 'message updated' })
+            }
+        })
+    }
+    else {
+        Chat.findOneAndUpdate({ _id: id, "messages._id": message.id }, { $set: { "messages.$.text": message.text, "messages.$.timestamp": message.timestamp } }, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            if (!document) {
+                return res.send({ message: 'access denied' })
+            }
+            else {
+                return res.send({ message: 'message updated' })
+            }
+        })
+    }
+})
+
 
 export default router

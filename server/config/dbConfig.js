@@ -8,14 +8,14 @@ mongoose.connection.once('open', () => {
     const changeStreamChats = mongoose.connection.collection('chats').watch()
     const changeStreamChannels = mongoose.connection.collection('channels').watch()
     changeStreamChats.on('change', (newData) =>{
-        if(change.operationType === 'update'){
+        if(newData.operationType === 'update'){
             pusher.trigger("chats", "newMessage", {
                 data: newData
               });
         }
     })
     changeStreamChannels.on('change', (newData) =>{
-        if(change.operationType === 'update'){
+        if(newData.operationType === 'update'){
             pusher.trigger("channels", "newMessage", {
                 data: newData
               })

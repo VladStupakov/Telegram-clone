@@ -4,6 +4,7 @@ import Channel from '../models/channelModel.js';
 import User from '../models/userModel.js';
 import multer from 'multer'
 import * as fs from 'fs';
+import logger from '../middlewares/logger.js'
 
 const router = express.Router();
 
@@ -251,5 +252,102 @@ router.put('/', upload, (req, res) => {
     }
 })
 
+router.get('/:type/:id', (req, res) => {
+    const type = req.params.type
+    const id = req.params.id
+    if (type == 'chat') {
+        Chat.findById(id, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            if (!document) {
+                return res.send({ error: `${type} is not exist` })
+            }
+            else {
+                return res.json(document)
+            }
+        })
+    }
+    else {
+        Channel.findById(id, (err, document) => {
+            if (err) {
+                return res.send({ err })
+            }
+            if (!document) {
+                return res.send({ error: `${type} is not exist` })
+            }
+            else {
+                return res.json(document)
+            }
+        })
+    }
+})
+
+router.get('/', logger, (req, res) => {
+    const user = req.user
+    const promises = [Channel.aggregate([
+        {
+            $match: { _id: { $in: user.channels } }
+        },
+        {
+            $project:
+            {
+                _id: 1,
+                name: 1,
+                lastMessage: { $arrayElemAt: ["$messages", -1] },
+                type: 'channel',
+            }
+        },
+    ]),
+    Chat.aggregate([
+        {
+            $match: { _id: { $in: user.chats } },
+        },
+        {
+            $lookup: {
+                from: "users",
+                localField: "members",
+                foreignField: "_id",
+                as: "members",
+
+            }
+        },
+        {
+            $project:
+            {
+                _id: 1,
+                'members._id': 1,
+                'members.name': 1,
+                lastMessage: { $arrayElemAt: ["$messages", -1] },
+                type: 'chat',
+
+            }
+        },
+    ])
+    ]
+    Promise.all(promises)
+        .then((result) => {
+            let data = result.flat().sort((a, b) => {
+                if (a.lastMessage !== undefined && b.lastMessage !== undefined) {
+                    if (a.lastMessage.timestamp > b.lastMessage.timestamp) {
+                        return -1;
+                    }
+                    else {
+                        if (a.lastMessage.timestamp < b.lastMessage.timestamp) {
+                            return 1;
+                        }
+                        else {
+                            return 0;
+                        }
+                    }
+                }
+
+            })
+            return res.json(data)
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+})
 
 export default router

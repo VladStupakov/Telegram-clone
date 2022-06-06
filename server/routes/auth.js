@@ -6,15 +6,15 @@ import { confirmRegistrationLetter } from '../services/mailingService.js'
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
-    const user = req.body
+    const data = req.body
     const salt = await bcrypt.genSalt(10)
-    user.password = await bcrypt.hash(user.password, salt)
-    User.create(user, (err, newUser) => {
+    data.password = await bcrypt.hash(data.password, salt)
+    User.create(data, (err, newUser) => {
         if (err) {
             return res.send(err)
         }
         else {
-            confirmRegistrationLetter(res, newUser.email)
+            confirmRegistrationLetter(newUser.email)
             return res.status(200).send('user registered')
         }
     })

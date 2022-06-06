@@ -18,12 +18,13 @@ const sessionStore = new MongoStore({
   collection: 'sessions'
 })
 
-
 app.use(express.json())
+
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'localhost:3000',
   credentials: true
 }))
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -32,6 +33,7 @@ app.use(session({
   cookie: { maxAge: 604800000 },
   unset: "destroy"
 }));
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(express.static(__dirname + '/uploads'));

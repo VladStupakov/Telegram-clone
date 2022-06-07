@@ -20,10 +20,7 @@ const sessionStore = new MongoStore({
 
 app.use(express.json())
 
-app.use(cors({
-  origin: 'localhost:3000',
-  credentials: true
-}))
+app.use(cors())
 
 app.use(session({
   secret: process.env.SESSION_SECRET,

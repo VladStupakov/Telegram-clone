@@ -11,11 +11,11 @@ router.post('/register', async (req, res) => {
     data.password = await bcrypt.hash(data.password, salt)
     User.create(data, (err, newUser) => {
         if (err) {
-            return res.send(err)
+            return res.json({ error: err })
         }
         else {
             confirmRegistrationLetter(newUser.email)
-            return res.status(200).send('user registered')
+            return res.status(200).json({ message: 'user registered' })
         }
     })
 });
@@ -45,7 +45,7 @@ router.post('/logout', (req, res) => {
 })
 
 router.patch('/confirm', (req, res) => {
-    const id =  req.user_id
+    const id = req.user_id
     User.findById(id, (err, user) => {
         if (err) {
             return res.status(505).send({ err })

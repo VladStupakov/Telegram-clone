@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { Link } from 'react-router-dom';
 
 const Register = () => {
 
@@ -7,18 +8,17 @@ const Register = () => {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const [responseError, setResponseError] = useState()
-    const [successMessage, setMessage] = useState()
+    const [responseSuccess, setResponseSuccess] = useState()
     const emailRegExp = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}')
     const passwordRegExp = new RegExp('(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})')
-    const [submitButtonStatus, setStatus] = useState(true)
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
     const [formErrors, setFormErrors] = useState([])
-    
+
     let Submit = async (e) => {
         setFormErrors([])
+        setResponseError()
         e.preventDefault()
-        if (!validateForm())
-            console.log(formErrors);
-        else
+        if (validateForm()) {
             fetch('http://localhost:3001/register', {
                 method: 'POST',
                 mode: 'cors',
@@ -34,14 +34,15 @@ const Register = () => {
             })
                 .then((response) => { return response.json() })
                 .then((response) => {
-                    if (response.error){
-                        if(response.error.code === 11000)
+                    if (response.error) {
+                        if (response.error.code === 11000)
                             setResponseError('email already in use')
-                    }                       
+                    }
                     else (
-                        setMessage(response.message)
+                        setResponseSuccess(response.message)
                     )
                 })
+        }
     }
 
     const ResponseError = () => {
@@ -49,33 +50,33 @@ const Register = () => {
     }
 
     const SuccessfulResponseMessage = () => {
-        return <div>{successMessage}</div>
+        return <div>{responseSuccess}</div>
     }
 
-    let handleNameChange = (e) => {
+    const handleNameChange = (e) => {
         setName(e.target.value)
     }
 
-    let handleSurnameChange = (e) => {
+    const handleSurnameChange = (e) => {
         setSurname(e.target.value)
     }
 
-    let handleEmailChange = (e) => {
+    const handleEmailChange = (e) => {
         setEmail(e.target.value)
     }
 
-    let handlePasswordChange = (e) => {
+    const handlePasswordChange = (e) => {
         setPassword(e.target.value)
     }
 
-    let handleFormChange = () => {
+    const handleFormChange = () => {
         if (name && surname && email && password)
-            setStatus(false)
+            setIsSubmitDisabled(false)
         else
-            setStatus(true)
+            setIsSubmitDisabled(true)
     }
 
-    let validateForm = () => {
+    const validateForm = () => {
         let isValid = true
         if (!emailRegExp.test(email)) {
             isValid = false
@@ -91,7 +92,7 @@ const Register = () => {
     const Errors = () => {
         return (
             <ul>
-                {formErrors.map(err =>{
+                {formErrors.map(err => {
                     return <li key={err}>{err}</li>
                 })}
             </ul>
@@ -100,15 +101,19 @@ const Register = () => {
 
     return (
         <div>
+            <h3>Register to use chat</h3>
             <form onSubmit={Submit} onChange={handleFormChange}>
                 <input type="text" name="name" placeholder='Name' onChange={(e) => handleNameChange(e)} />
                 <input type="text" name="surname" placeholder='Surname' onChange={(e) => handleSurnameChange(e)} />
                 <input type="text" name="email" placeholder='email' onChange={(e) => handleEmailChange(e)} />
                 <input type="text" name="password" placeholder='password' onChange={(e) => handlePasswordChange(e)} />
-                <button type="submit" disabled={submitButtonStatus}>Confirm</button>
+                <button type="submit" disabled={isSubmitDisabled}>Confirm</button>
             </form>
             {formErrors.length > 0 ? <Errors /> : ''}
             {responseError ? <ResponseError /> : <SuccessfulResponseMessage />}
+            <div>Already registered?
+                <Link to="/login">Log in</Link>
+            </div>
         </div>
     )
 }

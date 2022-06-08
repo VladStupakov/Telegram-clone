@@ -343,7 +343,7 @@ router.get('/', logger, (req, res) => {
                 }
 
             })
-            return res.json(data)
+            return res.json({data: data})
         })
         .catch((err) => {
             console.log(err);

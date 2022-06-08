@@ -3,7 +3,7 @@ export default function logger(req, res, next) {
         next()
     }
     else{
-        res.redirect('/login')
+        res.json({error: 'login error'})
     }
 }
 

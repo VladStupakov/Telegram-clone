@@ -21,7 +21,7 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    res.status(200).send({ user: req.user._id })
+    res.json({ user: req.user._id })
 })
 
 router.post('/logout', (req, res) => {
@@ -62,6 +62,13 @@ router.patch('/confirm', (req, res) => {
             })
         }
     })
-
 });
+
+router.get('/isLogged', (req, res) => {
+    if (req.user)
+        res.send(true)
+    else
+        res.send(false)
+})
+
 export default router

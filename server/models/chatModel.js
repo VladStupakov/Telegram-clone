@@ -10,7 +10,10 @@ const chatShema = new mongoose.Schema({
     messages: [
         {
             text: String,
-            timestamp: String,
+            timestamp: {
+                type: String,
+                default: '66.66.6666'
+            },
             media: [String],
             author: {
                 type: mongoose.Schema.Types.ObjectId,
@@ -22,7 +25,6 @@ const chatShema = new mongoose.Schema({
             }]
         },
     ],
-    link: String
 });
 
 const Chat = mongoose.model('Chat', chatShema)

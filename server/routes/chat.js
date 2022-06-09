@@ -296,6 +296,7 @@ router.get('/', logger, (req, res) => {
                 name: 1,
                 lastMessage: { $arrayElemAt: ["$messages", -1] },
                 type: 'channel',
+                messagesCount: {$size: '$messages'}
             }
         },
     ]),
@@ -320,7 +321,7 @@ router.get('/', logger, (req, res) => {
                 'members.name': 1,
                 lastMessage: { $arrayElemAt: ["$messages", -1] },
                 type: 'chat',
-
+                messagesCount: {$size: '$messages'}
             }
         },
     ])

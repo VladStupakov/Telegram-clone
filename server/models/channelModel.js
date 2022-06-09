@@ -33,7 +33,6 @@ const channelShema = new mongoose.Schema({
             }
         },
     ],
-    link: String
 });
 
 const Channel = mongoose.model('Channel', channelShema)

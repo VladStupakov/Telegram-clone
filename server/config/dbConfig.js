@@ -10,15 +10,22 @@ mongoose.connection.once('open', () => {
     changeStreamChats.on('change', (newData) =>{
         if(newData.operationType === 'update'){
             pusher.trigger("chats", "newMessage", {
-                data: newData
+                length: newData.updateDescription.updatedFields.messages.length,
+                data: newData.updateDescription.updatedFields.messages[newData.updateDescription.updatedFields.messages.length - 1],
+                collection: newData.ns.coll,
+                id: newData.documentKey._id
               });
         }
     })
     changeStreamChannels.on('change', (newData) =>{
         if(newData.operationType === 'update'){
             pusher.trigger("channels", "newMessage", {
-                data: newData
+                length: newData.updateDescription.updatedFields.messages.length,
+                data: newData.updateDescription.updatedFields.messages[newData.updateDescription.updatedFields.messages.length - 1],
+                collection: newData.ns.coll,
+                id: newData.documentKey._id
               })
         }
     })
+    
 })

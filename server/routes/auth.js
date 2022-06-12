@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt'
 import User from '../models/userModel.js'
 import passport from '../middlewares/passport.js'
 import { confirmRegistrationLetter } from '../services/mailingService.js'
+import logger from '../middlewares/logger.js'
 const router = express.Router();
 
 router.post('/register', async (req, res) => {
@@ -21,54 +22,47 @@ router.post('/register', async (req, res) => {
 });
 
 router.post('/login', passport.authenticate('local'), (req, res) => {
-    res.json({ user: req.user._id })
+    res.json({ success: 'successful login' })
 })
 
-router.post('/logout', (req, res) => {
-    User.findById(req.user._id, (err, user) => {
+router.post('/logout', logger, (req, res) => {
+    User.findById(req.user.id, (err, user) => {
         if (err) {
-            return res.send({ err })
+            return res.json({ error: err })
         }
         else {
             user.isLogged = false
-            user.save((err, u) => {
-                if (err) {
-                    return res.send({ err })
+            user.save((error, user) => {
+                if (error) {
+                    return res.json({ error })
                 }
                 else {
                     req.session = null
-                    res.redirect('/login')
+                    return res.status(200).json({ success: 'successful logout' })
                 }
             })
         }
     });
 })
 
-router.patch('/confirm', (req, res) => {
+router.patch('/confirm',  (req, res) => {
     const id = req.user_id
     User.findById(id, (err, user) => {
         if (err) {
-            return res.status(505).send({ err })
+            return res.send({ error: err })
         }
         else {
             user.varified = true;
-            user.save((err, document) => {
-                if (err) {
-                    return res.status(505).send({ err })
+            user.save((error, document) => {
+                if (error) {
+                    return res.json({ error })
                 }
                 else {
-                    return res.status(200).send({ message: 'email confirmed' })
+                    return res.status(200).json({ success: 'email confirmed' })
                 }
             })
         }
     })
 });
-
-router.get('/isLogged', (req, res) => {
-    if (req.user)
-        res.send(true)
-    else
-        res.send(false)
-})
 
 export default router

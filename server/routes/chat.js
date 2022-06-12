@@ -256,35 +256,35 @@ router.get('/:type/:id', (req, res) => {
     const type = req.params.type
     const id = req.params.id
     if (type == 'chat') {
-        Chat.findById(id, (err, document) => {
-            if (err) {
-                return res.send({ err })
+        Chat.findById(id, (error, document) => {
+            if (error) {
+                return res.json({ error })
             }
             if (!document) {
-                return res.send({ error: `${type} is not exist` })
+                return res.json({ error: `${type} is not exist` })
             }
             else {
-                return res.json(document)
+                return res.json({ data: document })
             }
         })
     }
     else {
-        Channel.findById(id, (err, document) => {
-            if (err) {
-                return res.send({ err })
+        Channel.findById(id, (error, document) => {
+            if (error) {
+                return res.send({ error })
             }
             if (!document) {
                 return res.send({ error: `${type} is not exist` })
             }
             else {
-                return res.json(document)
+                return res.json({ data: document })
             }
         })
     }
 })
 
-router.get('/', logger, (req, res) => {
-    const user = req.user
+router.get('/', logger, async (req, res) => {
+    const user = await User.findById(req.user.id)
     const promises = [Channel.aggregate([
         {
             $match: { _id: { $in: user.channels } }
@@ -296,7 +296,7 @@ router.get('/', logger, (req, res) => {
                 name: 1,
                 lastMessage: { $arrayElemAt: ["$messages", -1] },
                 type: 'channel',
-                messagesCount: {$size: '$messages'}
+                messagesCount: { $size: '$messages' }
             }
         },
     ]),
@@ -321,7 +321,7 @@ router.get('/', logger, (req, res) => {
                 'members.name': 1,
                 lastMessage: { $arrayElemAt: ["$messages", -1] },
                 type: 'chat',
-                messagesCount: {$size: '$messages'}
+                messagesCount: { $size: '$messages' }
             }
         },
     ])
@@ -344,7 +344,7 @@ router.get('/', logger, (req, res) => {
                 }
 
             })
-            return res.json({data: data})
+            return res.json({ data: data })
         })
         .catch((err) => {
             console.log(err);

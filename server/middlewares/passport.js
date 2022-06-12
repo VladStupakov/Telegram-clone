@@ -10,30 +10,30 @@ passport.use(new LocalStrategy({
     passwordField: 'password'
 },
     (email, password, cb) => {
-        User.findOne({ email }, (err, user) => {
-            if (err) {
-                return cb(err, null)
+        User.findOne({ email }, (error, user) => {
+            if (error) {
+                return cb(error, null)
             }
             if (!user) {
                 return cb(null, false)
             }
             bcrypt.compare(password, user.password, (err, result) => {
                 if (err) {
-                    return cb(err, null)
+                    return cb({ error: err }, null)
                 }
                 else {
-                    if(result){
+                    if (result) {
                         user.isLogged = true
-                        user.save((err, u) => {
-                            if(err){
-                                return cb(err, null)
+                        user.save((er, u) => {
+                            if (er) {
+                                return cb({error: er}, null)
                             }
-                            else{
+                            else {
                                 return cb(null, user)
                             }
                         })
                     }
-                    else{
+                    else {
                         return cb(null, false)
                     }
                 }
@@ -50,9 +50,14 @@ passport.deserializeUser((id, cb) => {
         if (err) {
             return cb(err)
         }
-        else{
-            cb(null, user)
-        }      
+        else {
+            cb(null, {
+                id: user._id,
+                name: user.name,
+                surname: user.surname,
+                isLogged: true
+            })
+        }
     });
 });
 

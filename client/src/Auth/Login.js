@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 const Login = () => {
 
     const [user, setUser] = useState()
+    const [loginError, setLoginError] = useState()
     const navigate = useNavigate();
 
     const Submit = (e) => {
@@ -21,11 +22,19 @@ const Login = () => {
         })
             .then((response) => { return response.json() })
             .then((response) => {
-                if (response.user) {
-                    localStorage.setItem('user', response.user)
+                if (response.success) {
                     navigate('/')
                 }
+                if(response.error){
+                    setLoginError(response.error)
+                }
             })
+    }
+
+    const Error = () =>{
+        return(
+            <div>{loginError}</div>
+        )
     }
 
     return (
@@ -35,6 +44,7 @@ const Login = () => {
                 <input type="text" name="password" onChange={(e) => setUser({ ...user, password: e.target.value })} placeholder="password" />
                 <button type="submit" >Log in</button>
             </form>
+            {loginError ? <Error /> : ''}
         </div>
     )
 }

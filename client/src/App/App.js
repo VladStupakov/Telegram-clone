@@ -1,24 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import ChatsList from '../ChatsList/ChatsList.js'
 import ChatWindow from '../ChatWindow/ChatWindow.js'
 import Pusher from 'pusher-js';
 
 const App = () => {
 
-    const user = localStorage.getItem("user")
     const [data, setData] = useState()
     const [isDataLoading, setIsDataLoading] = useState(true)
-
-    const AppWindow = () => {
-
-        return (
-            <div>
-                <ChatsList data={data} />
-                <ChatWindow />
-            </div>
-        )
-    }
+    const [selectedChat, setSelectedChat] = useState()
+    const navigate = useNavigate()
 
     const connectPusher = () => {
         const pusher = new Pusher('7c2eabd6eb5ada00a377', {
@@ -67,12 +58,13 @@ const App = () => {
                     setData(response.data)
                     setIsDataLoading(false)
                 }
-                if (response.error)
-                    console.log(response.error)
+                if (response.error) {
+                    if (response.error === 'login error')
+                        navigate('/register')
+                }
             }
             )
     }
-
 
     useEffect(() => {
         getData()
@@ -84,9 +76,10 @@ const App = () => {
     })
 
     return (
-        !user ?
-            <Navigate to='/register' />
-            : <AppWindow />
+        <div>
+            <ChatsList data={data} setSelectedChat={setSelectedChat} />
+            <ChatWindow data={selectedChat} />
+        </div>
     )
 }
 

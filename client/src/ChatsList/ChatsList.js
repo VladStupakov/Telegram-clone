@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import SingleChat from '../ChatsList/SingleChat.js'
 
-const ChatsList = ({data}) => {
+
+const ChatsList = ({data, setSelectedChat}) => {
 
     return (
         <div>
             {data?
             data.map(chat => {
-                return (
-                    <div key={chat._id}>
-                         {chat.lastMessage.text}
-                    </div>
-                )
-            }): 'no data'}
+                return <SingleChat key={chat._id} body={chat} setSelectedChat={setSelectedChat}/>
+            }): 'loading data...'}
         </div>
     )
 }

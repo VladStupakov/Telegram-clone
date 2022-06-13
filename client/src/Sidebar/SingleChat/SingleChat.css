@@ -1,0 +1,40 @@
+.SingleChat{
+    display: flex;
+    cursor: pointer;   
+    padding: 10px;    
+    align-items: center;
+}
+.SingleChat:hover{
+    background-color: #F1F1F1;
+}
+
+.SingleChat__Info{
+    padding-left: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    height: 45px;
+    width: 100%;
+    padding-top: 5px;
+}
+
+.SingleChat__LastMessage{
+    height: 21px;
+    overflow: hidden;
+    width: 70%;
+    flex: 0 1 auto;
+}
+
+.SingleChat__Author{
+    text-align: center;
+}
+
+.SingleChat__ChatName{
+    font-weight: bold;
+    width: 100%
+}
+.SingleChat__TimeStamp{
+    width: 10%
+}
+

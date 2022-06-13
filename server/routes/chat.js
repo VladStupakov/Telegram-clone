@@ -311,7 +311,7 @@ router.get('/', logger, async (req, res) => {
                 foreignField: "_id",
                 as: "members",
 
-            }
+            },           
         },
         {
             $project:
@@ -344,7 +344,7 @@ router.get('/', logger, async (req, res) => {
                 }
 
             })
-            return res.json({ data: data })
+            return res.json({ data: data, user: user._id })
         })
         .catch((err) => {
             console.log(err);

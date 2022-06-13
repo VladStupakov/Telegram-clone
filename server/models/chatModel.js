@@ -12,7 +12,7 @@ const chatShema = new mongoose.Schema({
             text: String,
             timestamp: {
                 type: String,
-                default: '66.66.6666'
+                default: '66.66'
             },
             media: [String],
             author: {

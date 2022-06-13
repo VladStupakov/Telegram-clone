@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom';
-import ChatsList from '../ChatsList/ChatsList.js'
+import { useNavigate } from 'react-router-dom';
+import Sidebar from '../Sidebar/Sidebar.js'
 import ChatWindow from '../ChatWindow/ChatWindow.js'
 import Pusher from 'pusher-js';
+import './App.css'
 
 const App = () => {
 
     const [data, setData] = useState()
     const [isDataLoading, setIsDataLoading] = useState(true)
     const [selectedChat, setSelectedChat] = useState()
+    const [user, setUser] = useState()
     const navigate = useNavigate()
 
     const connectPusher = () => {
@@ -56,6 +58,7 @@ const App = () => {
             .then((response) => {
                 if (response.data) {
                     setData(response.data)
+                    setUser(response.user)
                     setIsDataLoading(false)
                 }
                 if (response.error) {
@@ -76,9 +79,11 @@ const App = () => {
     })
 
     return (
-        <div>
-            <ChatsList data={data} setSelectedChat={setSelectedChat} />
-            <ChatWindow data={selectedChat} />
+        <div className='App'>
+            <div className='App__Body'>
+                <Sidebar data={data} setSelectedChat={setSelectedChat} user={user}/>
+                <ChatWindow data={selectedChat} />
+            </div>
         </div>
     )
 }

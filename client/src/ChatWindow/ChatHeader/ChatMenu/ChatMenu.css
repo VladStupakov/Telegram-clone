@@ -1,0 +1,24 @@
+.Chat__Menu{
+    position: absolute;
+    z-index: 1;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 5px;
+    right: 6vw;
+    top: 10vh;
+    width: auto;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+  }
+  
+  .Chat__MenuItem{
+      padding: 2px;
+      border-radius: 5px;
+  }
+  
+  .Chat__MenuItem:hover{
+      cursor: pointer;
+      background-color: #c7c2c2;
+  }

@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import ChatHeader from '../ChatWindow/ChatHeader.js'
+import ChatHeader from './ChatHeader/ChatHeader.js'
 import ChatBody from '../ChatWindow/ChatBody.js'
+import './ChatWindow.css'
 
-const ChatWindow = ({data}) => {
+
+const ChatWindow = ({data, toggleChatInformation}) => {
 
     const MainWindow = () =>{
         return(
-            <div>
-                <ChatHeader members={data.members} />
+            <div className='Chat'>
+                <ChatHeader members={data.members} chat={data.chat._id} toggleChatInformation={toggleChatInformation}/>
                 <ChatBody messages={data.chat.messages} />
             </div>
         )
@@ -15,7 +17,7 @@ const ChatWindow = ({data}) => {
 
     return (        
         data? <MainWindow />
-        : 'loading messages'
+        : 'select chat...'
     )
 }
 

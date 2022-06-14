@@ -4,6 +4,7 @@ import Sidebar from '../Sidebar/Sidebar.js'
 import ChatWindow from '../ChatWindow/ChatWindow.js'
 import Pusher from 'pusher-js';
 import './App.css'
+import ChatInformation from '../ChatWindow/ChatHeader/ChatInformation/ChatInformation.js';
 
 const App = () => {
 
@@ -12,6 +13,7 @@ const App = () => {
     const [selectedChat, setSelectedChat] = useState()
     const [user, setUser] = useState()
     const navigate = useNavigate()
+    const [isChatInformationVisible, setIsChatInformationVisible] = useState(false)
 
     const connectPusher = () => {
         const pusher = new Pusher('7c2eabd6eb5ada00a377', {
@@ -81,8 +83,9 @@ const App = () => {
     return (
         <div className='App'>
             <div className='App__Body'>
-                <Sidebar data={data} setSelectedChat={setSelectedChat} user={user}/>
-                <ChatWindow data={selectedChat} />
+                <Sidebar data={data} setSelectedChat={setSelectedChat} user={user} />
+                <ChatWindow data={selectedChat} toggleChatInformation={setIsChatInformationVisible}/>
+                {isChatInformationVisible && <ChatInformation chat={selectedChat} />}
             </div>
         </div>
     )

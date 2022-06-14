@@ -68,7 +68,7 @@ router.patch('/leave-chat', (req, res) => {
     ]
     Promise.all(promises)
         .then(() => {
-            return res.send({ message: 'chat successfully left' })
+            return res.json({ success: 'chat left' })
         })
         .catch((err) => {
             console.log(err)
@@ -79,29 +79,29 @@ router.delete('/clear-chat', (req, res) => {
     const data = req.body
     Chat.findByIdAndUpdate(data.chatId, { $set: { 'messages': [] } }, { multi: true }, (err, document) => {
         if (err) {
-            return res.send(err)
+            return res.json({error: err})
         }
         else
-            return res.send({ message: 'chat cleared' })
+            return res.json({ success: 'chat cleared' })
     })
 })
 
 router.delete('/delete-chat', (req, res) => {
     const data = req.body
-    Chat.findByIdAndDelete({ _id: data.chatId, members: data.userId }, (err, document) => {
+    Chat.findOneAndDelete({ _id: data.chatId, members: req.user.id }, (err, document) => {
         if (err) {
-            return res.send(err)
+            return res.json({error: err})
         }
         if (!document) {
-            return res.send({ message: 'you are not a chat member' })
+            return res.json({ error: 'you are not a chat member' })
         }
         else {
             User.updateMany({ _id: { $in: document.members } }, { $pull: { chats: document._id } }, (error, result) => {
                 if (error) {
-                    return res.send(err)
+                    return res.json({error: err})
                 }
                 else {
-                    return res.send({ message: 'chat deleted' })
+                    return res.json({ success: 'chat deleted' })
                 }
             })
         }

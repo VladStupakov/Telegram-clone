@@ -14,7 +14,7 @@ const Register = () => {
     const [isSubmitDisabled, setIsSubmitDisabled] = useState(true)
     const [formErrors, setFormErrors] = useState([])
 
-    let Submit = async (e) => {
+    const Submit = async (e) => {
         setFormErrors([])
         setResponseError()
         e.preventDefault()

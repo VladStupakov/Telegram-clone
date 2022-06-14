@@ -1,0 +1,19 @@
+.Chat__Header{
+    border-bottom: 1px solid #F1F1F1;
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+.Chat__HeaderInfo{
+    flex: 1;
+}
+
+.Chat__HeaderChatName{
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.Chat__HeaderLastSeenAt{
+    font-size: 14px;
+}

@@ -44,7 +44,7 @@ const ChatHeader = ({ members, chat, toggleChatInformation }) => {
                 </IconButton>
             </div>
             {
-                chatMenuVisibility && <ChatMenu chat={chat._id} hideMenu={toggleChatMenu} parentNode={node} />
+                chatMenuVisibility && <ChatMenu chat={chat._id} hideMenu={toggleChatMenu} parentNode={node}/>
             }
         </div>
     )

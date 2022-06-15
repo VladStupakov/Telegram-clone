@@ -4,12 +4,8 @@
     background-color: white;
     border: 1px solid grey;
     border-radius: 5px;
-    right: 6vw;
-    top: 10vh;
     width: auto;
     height: auto;
-    display: flex;
-    flex-direction: column;
     padding: 5px;
   }
   

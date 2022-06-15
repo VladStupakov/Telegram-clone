@@ -2,19 +2,32 @@ import React, { useState, useEffect, useRef } from 'react'
 import './ChatMenu.css'
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 
+
 const ChatMenu = ({ chat, hideMenu, parentNode }) => {
 
     const [open, setOpen] = useState(false)
     const [text, setText] = useState()
     const [menuItem, setMenuItem] = useState()
     const node = useRef()
+    const [position, setPosition] = useState({})
 
-    useEffect(() => {
+    useEffect(() => {        
         document.addEventListener("click", handleClick);
         return () => {
             document.removeEventListener("click", handleClick);
         };
     }, []);
+
+    useEffect(()=>{
+        calculatePosition()
+    }, [node])
+
+    const calculatePosition = () => {
+        setPosition({
+            x: parentNode.current.offsetLeft - 30 + 'px',
+            y: parentNode.current.offsetTop + 30 + 'px',
+        })
+    }
 
     const handleClick = (e) => {
         if (!node.current.contains(e.target) && !parentNode.current.contains(e.target)) {
@@ -62,7 +75,7 @@ const ChatMenu = ({ chat, hideMenu, parentNode }) => {
     }
 
     return (
-        <div ref={node} className="Chat__Menu" >
+        <div ref={node} style={{left: position.x, top: position.y}} className="Chat__Menu" >
             <div className="Chat__MenuItem" onClick={() => { handleClickOpen(); setText('delete this chat'); setMenuItem('delete') }} >Delete chat</div>
             <div className="Chat__MenuItem" onClick={() => { handleClickOpen(); setText('clear message history'); setMenuItem('clear') }} >Clear chat</div>
             <Dialog

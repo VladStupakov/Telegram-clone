@@ -1,0 +1,20 @@
+.ChatInformation{
+    display: flex;
+    flex-direction: column;
+    flex: 0.2;
+    padding: 12px;   
+}
+
+.ChatInformation__Header{
+    display: flex;
+    align-items: center;
+}
+
+.ChatInformation__MembersCount{
+    margin-left: 5px;
+}
+
+.ChatInformation__MembersCount:hover{
+    background-color: rgb(231, 230, 230);
+    cursor: pointer;
+}

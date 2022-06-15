@@ -15,7 +15,11 @@ const userShema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        isPrivate: {
+            type: Boolean,
+            default: true
+        }
     },
     varified: {
         type: Boolean,

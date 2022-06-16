@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Button, Typography, Modal } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Box, Typography, Modal, useFormControl } from '@mui/material';
 
 const style = {
     position: 'absolute',
@@ -13,10 +13,28 @@ const style = {
     p: 4,
 };
 
-const MembersList = ({ members, show, close }) => {
+const MembersList = ({ show, close, chat }) => {
 
+    const [members, setMembers] = useState({})
+    const [isLoading, setIsloading] = useState(true)
 
-    //get members list
+    useEffect(() => {
+        const url = 'http://localhost:3001/main/members/' + chat.type + `/${chat._id}`
+        fetch(url, {
+            method: 'GET',
+            mode: 'cors',
+            credentials: "include",
+        })
+            .then((response) => { return response.json() })
+            .then((response) => {
+                if (response.error)
+                    console.log(response.error)
+                else {
+                    setMembers(response.data[0].members)
+                    setIsloading(false)
+                }
+            })
+    }, [])
 
     return (
         <div>
@@ -30,11 +48,11 @@ const MembersList = ({ members, show, close }) => {
                     <Typography id="modal-modal-title" variant="h6" component="h2">
                         List of members
                     </Typography>
-                    <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                    <Typography id="modal-modal-description" sx={{ mt: 2 }} component={'span'}>
                         {
-                            members.map(member => {
-                                return <div>{member.name + ' ' + member.surname}</div>
-                            })
+                            !isLoading ? members.map(member => {
+                                return <p key={member._id}>{member.name + ' ' + member.surname}</p>
+                            }) : 'loading members..'
                         }
                     </Typography>
                 </Box>

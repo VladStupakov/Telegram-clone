@@ -6,8 +6,6 @@ const ChatInformation = ({ chat }) => {
 
     const [showMembersList, setShowMembersList] = useState(false)
 
-    console.log(chat);
-
     return (
         <div className="ChatInformation" >
             <div className='ChatInformation__Header'>
@@ -19,7 +17,7 @@ const ChatInformation = ({ chat }) => {
             <div className='ChatInformation__Body'>
 
             </div>
-            <MembersList show={showMembersList} close={() => setShowMembersList(false)} />
+            {showMembersList && <MembersList show={showMembersList} close={() => setShowMembersList(false)} chat={chat}/>}
         </div>
     )
 }

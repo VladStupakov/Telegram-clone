@@ -84,8 +84,8 @@ const App = () => {
         <div className='App'>
             <div className='App__Body'>
                 <Sidebar data={data} setSelectedChat={setSelectedChat} user={user} />
-                <ChatWindow data={selectedChat} toggleChatInformation={setIsChatInformationVisible}/>
-                {isChatInformationVisible && <ChatInformation chat={selectedChat} />}
+                <ChatWindow data={selectedChat} toggleChatInformation={setIsChatInformationVisible} user={user}/>
+                {isChatInformationVisible && <ChatInformation chat={selectedChat.chat} />}
             </div>
         </div>
     )

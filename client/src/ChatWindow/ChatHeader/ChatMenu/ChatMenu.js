@@ -20,12 +20,12 @@ const ChatMenu = ({ chat, hideMenu, parentNode }) => {
 
     useEffect(()=>{
         calculatePosition()
-    }, [node])
+    }, [])
 
     const calculatePosition = () => {
         setPosition({
-            x: parentNode.current.offsetLeft - 30 + 'px',
-            y: parentNode.current.offsetTop + 30 + 'px',
+            x: parentNode.current.offsetLeft - 45 + 'px',
+            y: parentNode.current.offsetTop + 50 + 'px',
         })
     }
 
@@ -58,12 +58,12 @@ const ChatMenu = ({ chat, hideMenu, parentNode }) => {
             case 'delete':
                 requestUrl = "http://localhost:3001/main/delete-chat"
                 params.method = 'DELETE'
-                params.body = JSON.stringify({ chatId: chat })
+                params.body = JSON.stringify({ chatId: chat._id })
                 break;
             case 'clear':
                 requestUrl = "http://localhost:3001/main/clear-chat"
                 params.method = 'DELETE'
-                params.body = JSON.stringify({ chatId: chat })
+                params.body = JSON.stringify({ chatId: chat._id })
                 break;
             default:
                 break;

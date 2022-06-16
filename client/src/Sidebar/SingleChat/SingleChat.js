@@ -17,7 +17,7 @@ const SingleChat = ({ body, setSelectedChat, user, isSelected, setActiveChat }) 
         })
             .then((response) => { return response.json() })
             .then((response) => {
-                setSelectedChat({ chat: response.data, members: body.members })
+                setSelectedChat({ chat: {...response.data, type: body.type}, members: body.members })
             })
     }
 

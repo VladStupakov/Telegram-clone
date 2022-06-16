@@ -1,0 +1,26 @@
+.Chat__Body{
+    flex: 1;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.Chat__TimeStamp{
+    color: grey;
+    font-size: 12px; 
+    text-align: right;
+}
+
+.Chat__Message{
+    padding: 10px;
+    margin: 10px;
+    background-color: rgb(203, 255, 255);
+    width: fit-content;
+    border-radius: 10px;
+    max-width: 60%;
+    font-size: 18px;
+}
+
+.Chat__Reciever{
+    margin-left: auto;
+    background-color: green;
+}

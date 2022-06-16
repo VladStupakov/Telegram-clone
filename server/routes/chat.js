@@ -5,6 +5,7 @@ import User from '../models/userModel.js';
 import multer from 'multer'
 import * as fs from 'fs';
 import logger from '../middlewares/logger.js'
+import mongoose from 'mongoose'
 
 const router = express.Router();
 
@@ -79,7 +80,7 @@ router.delete('/clear-chat', (req, res) => {
     const data = req.body
     Chat.findByIdAndUpdate(data.chatId, { $set: { 'messages': [] } }, { multi: true }, (err, document) => {
         if (err) {
-            return res.json({error: err})
+            return res.json({ error: err })
         }
         else
             return res.json({ success: 'chat cleared' })
@@ -90,7 +91,7 @@ router.delete('/delete-chat', (req, res) => {
     const data = req.body
     Chat.findOneAndDelete({ _id: data.chatId, members: req.user.id }, (err, document) => {
         if (err) {
-            return res.json({error: err})
+            return res.json({ error: err })
         }
         if (!document) {
             return res.json({ error: 'you are not a chat member' })
@@ -98,7 +99,7 @@ router.delete('/delete-chat', (req, res) => {
         else {
             User.updateMany({ _id: { $in: document.members } }, { $pull: { chats: document._id } }, (error, result) => {
                 if (error) {
-                    return res.json({error: err})
+                    return res.json({ error: err })
                 }
                 else {
                     return res.json({ success: 'chat deleted' })
@@ -253,8 +254,7 @@ router.put('/', upload, (req, res) => {
 })
 
 router.get('/:type/:id', (req, res) => {
-    const type = req.params.type
-    const id = req.params.id
+    const { type, id } = req.params
     if (type == 'chat') {
         Chat.findById(id, (error, document) => {
             if (error) {
@@ -271,10 +271,10 @@ router.get('/:type/:id', (req, res) => {
     else {
         Channel.findById(id, (error, document) => {
             if (error) {
-                return res.send({ error })
+                return res.json({ error })
             }
             if (!document) {
-                return res.send({ error: `${type} is not exist` })
+                return res.json({ error: `${type} is not exist` })
             }
             else {
                 return res.json({ data: document })
@@ -311,7 +311,7 @@ router.get('/', logger, async (req, res) => {
                 foreignField: "_id",
                 as: "members",
 
-            },           
+            },
         },
         {
             $project:
@@ -349,6 +349,72 @@ router.get('/', logger, async (req, res) => {
         .catch((err) => {
             console.log(err);
         });
+})
+
+router.get('/members/:type/:id', (req, res) => {
+    const { type, id } = req.params
+    const match = { _id: mongoose.Types.ObjectId(id) }
+    const project = {
+        _id: 1,
+        'members._id': 1,
+        'members.name': 1,
+        'members.surname': 1,
+        'members.avatar': 1,
+        'members.varified': 1,
+        'members.isLogged': 1
+    }
+    const lookup = {
+        from: "users",
+        localField: "members",
+        foreignField: "_id",
+        as: "members",
+    }
+    if (type == 'chat') {
+        Chat.aggregate([
+            {
+                $match: match,
+            },
+            {
+                $lookup: lookup,
+            },
+            {
+                $project: project
+            }
+        ], {}, (error, document) => {
+            if (error) {
+                return res.json({ error })
+            }
+            if (!document) {
+                return res.json({ error: `${type} is not exist` })
+            }
+            else {
+                return res.json({ data: document })
+            }
+        })
+    }
+    else {
+        Channel.aggregate([
+            {
+                $match: match,
+            },
+            {
+                $lookup: lookup,
+            },
+            {
+                $project: project
+            }
+        ], {}, (error, document) => {
+            if (error) {
+                return res.json({ error })
+            }
+            if (!document) {
+                return res.json({ error: `${type} is not exist` })
+            }
+            else {
+                return res.json({ data: document })
+            }
+        })
+    }
 })
 
 export default router

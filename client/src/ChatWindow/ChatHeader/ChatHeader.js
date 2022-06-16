@@ -6,15 +6,15 @@ import ViewCompactIcon from '@mui/icons-material/ViewCompact';
 import ChatMenu from '../ChatHeader/ChatMenu/ChatMenu.js';
 import './ChatHeader.css'
 
-const ChatHeader = ({ members, chat, toggleChatInformation }) => {
+const ChatHeader = ({ chat, toggleChatInformation }) => {
 
     const [chatMenuVisibility, setChatMenuVisibility] = useState(false)
     const node = useRef()
 
     const formatMembers = () => {
         let formatedMembers = ''
-        members.forEach((member, index) => {
-            if (index === members.length - 1)
+        chat.members.forEach((member, index) => {
+            if (index === chat.members.length - 1)
                 formatedMembers += member.name
             else
                 formatedMembers += member.name + ', '
@@ -44,7 +44,7 @@ const ChatHeader = ({ members, chat, toggleChatInformation }) => {
                 </IconButton>
             </div>
             {
-                chatMenuVisibility && <ChatMenu chat={chat._id} hideMenu={toggleChatMenu} parentNode={node}/>
+                chatMenuVisibility && <ChatMenu chat={chat} hideMenu={toggleChatMenu} parentNode={node}/>
             }
         </div>
     )

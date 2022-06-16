@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from 'react'
 import ChatHeader from './ChatHeader/ChatHeader.js'
-import ChatBody from '../ChatWindow/ChatBody.js'
+import ChatBody from '../ChatWindow/ChatBody/ChatBody.js'
 import './ChatWindow.css'
 
 
-const ChatWindow = ({data, toggleChatInformation}) => {
+const ChatWindow = ({ data, toggleChatInformation, user }) => {
 
-    const MainWindow = () =>{
-        return(
+    const MainWindow = () => {
+        return (
             <div className='Chat'>
-                <ChatHeader members={data.members} chat={data.chat._id} toggleChatInformation={toggleChatInformation}/>
-                <ChatBody messages={data.chat.messages} />
+                <ChatHeader chat={data} toggleChatInformation={toggleChatInformation} />
+                <ChatBody messages={data.chat.messages} user={user}/>
             </div>
         )
     }
 
-    return (        
-        data? <MainWindow />
-        : 'select chat...'
+    return (
+        data ? <MainWindow />
+            : 'select chat...'
     )
 }
 

@@ -16,6 +16,7 @@ const App = () => {
     const [isChatInformationVisible, setIsChatInformationVisible] = useState(false)
 
     const connectPusher = () => {
+        console.log('connect')
         const pusher = new Pusher('7c2eabd6eb5ada00a377', {
             cluster: 'eu',
         });
@@ -33,18 +34,18 @@ const App = () => {
 
     const handleChatUpdates = (response) => {
         const modified = data.find(element => element._id === response.id && element.type === response.collection.slice(0, -1))
-        if (modified.messagesCount < response.length) {
+        if (modified.messagesCount < response.data.length) {
             const index = data.indexOf(modified)
             const newArrayElement = data[index]
-            newArrayElement.lastMessage.text = response.data.text
-            newArrayElement.lastMessage.timestamp = response.data.timestamp
-            newArrayElement.lastMessage.author = response.data.author
+            newArrayElement.lastMessage.text = response.data[response.data.length - 1].text
+            newArrayElement.lastMessage.timestamp = response.data[response.data.length - 1].timestamp
+            newArrayElement.lastMessage.author = response.data[response.data.length - 1].author
             setData([
                 ...data.slice(0, index),
                 newArrayElement,
                 ...data.slice(index + 1, data.length)
             ]);
-        }
+        }        
     }
 
     const getData = () => {
@@ -67,8 +68,7 @@ const App = () => {
                     if (response.error === 'login error')
                         navigate('/register')
                 }
-            }
-            )
+            })
     }
 
     useEffect(() => {
@@ -78,13 +78,13 @@ const App = () => {
     useEffect(() => {
         if (!isDataLoading)
             connectPusher()
-    })
+    }, [isDataLoading])
 
     return (
         <div className='App'>
             <div className='App__Body'>
                 <Sidebar data={data} setSelectedChat={setSelectedChat} user={user} />
-                <ChatWindow data={selectedChat} toggleChatInformation={setIsChatInformationVisible} user={user}/>
+                <ChatWindow data={selectedChat} toggleChatInformation={setIsChatInformationVisible} user={user} />
                 {isChatInformationVisible && <ChatInformation chat={selectedChat.chat} />}
             </div>
         </div>

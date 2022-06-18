@@ -166,8 +166,9 @@ router.delete('/delete-channel', (req, res) => {
 
 //send message in chat/channel
 router.post('/', upload, (req, res) => {
-    const { type, id, message } = req.body;
-    message.readBy = [req.user._id]
+    const { type, id} = req.body;
+    const message = JSON.parse(req.body.message)
+    message.readBy = [req.user.id]
     if (type === 'channel') {
         Channel.findByIdAndUpdate(id, { $addToSet: { messages: message, } }, (err, document) => {
             if (err) {
@@ -179,7 +180,7 @@ router.post('/', upload, (req, res) => {
         })
     }
     else {
-        message.author = req.user._id
+        message.author = req.user.id
         Chat.findByIdAndUpdate(id, { $addToSet: { messages: message } }, (err, document) => {
             if (err) {
                 return res.send({ err })

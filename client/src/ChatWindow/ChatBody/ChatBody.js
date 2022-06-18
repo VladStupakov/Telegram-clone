@@ -2,27 +2,13 @@ import React, { useState, useEffect , useRef} from 'react'
 import Message from './Message.js'
 import './ChatBody.css'
 
-const ChatBody = ({ messages, user }) => {
-
-    const usePrevious = (value) => {
-        const ref = useRef();
-        useEffect(() => {
-            ref.current = value;
-        });
-        return ref.current;
-    }
-    const prevData = usePrevious(messages)
-
-    useEffect(() => {
-        console.log(prevData)
-        console.log(messages)
-    }, [messages])
+const ChatBody = ({ messages, user, type, id }) => {
 
     return (
         <div className='Chat__Body'>
             {
                 messages.map((message) => {
-                    return <Message key={message._id} body={message} user={user}/>
+                    return <Message key={message._id} body={message} user={user} type={type} id={id}/>
                 })
             }
         </div>
@@ -30,4 +16,4 @@ const ChatBody = ({ messages, user }) => {
     )
 }
 
-export default React.memo(ChatBody)
+export default ChatBody

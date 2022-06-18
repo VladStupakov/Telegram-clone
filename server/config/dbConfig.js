@@ -10,8 +10,7 @@ mongoose.connection.once('open', () => {
     changeStreamChats.on('change', (newData) =>{
         if(newData.operationType === 'update'){
             pusher.trigger("chats", "newMessage", {
-                length: newData.updateDescription.updatedFields.messages.length,
-                data: newData.updateDescription.updatedFields.messages[newData.updateDescription.updatedFields.messages.length - 1],
+                data: newData.updateDescription.updatedFields.messages,
                 collection: newData.ns.coll,
                 id: newData.documentKey._id
               });
@@ -20,8 +19,7 @@ mongoose.connection.once('open', () => {
     changeStreamChannels.on('change', (newData) =>{
         if(newData.operationType === 'update'){
             pusher.trigger("channels", "newMessage", {
-                length: newData.updateDescription.updatedFields.messages.length,
-                data: newData.updateDescription.updatedFields.messages[newData.updateDescription.updatedFields.messages.length - 1],
+                data: newData.updateDescription.updatedFields.messages,
                 collection: newData.ns.coll,
                 id: newData.documentKey._id
               })

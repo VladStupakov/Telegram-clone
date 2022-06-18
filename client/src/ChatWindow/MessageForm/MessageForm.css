@@ -1,0 +1,23 @@
+.Chat__Footer {
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #F1F1F1;
+}
+
+form {
+    display: flex;
+    flex: 1;
+}
+
+form > textarea {
+    flex: 1;
+    border: none;
+    outline-color: white;
+    font-size: 18px;
+    resize: none;
+}
+
+.Chat__Footer > form > button {
+    display: none;
+}

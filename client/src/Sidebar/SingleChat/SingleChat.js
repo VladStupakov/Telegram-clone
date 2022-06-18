@@ -63,4 +63,4 @@ const SingleChat = ({ body, setSelectedChat, user, isSelected, setActiveChat }) 
     )
 }
 
-export default SingleChat
+export default React.memo(SingleChat)
